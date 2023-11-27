@@ -3,13 +3,32 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-
 const indexRouter = require("./routes/index");
 
 const app = express();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+
+const mongoose = require("mongoose");
+mongoose.connect(process.env.DATABASE_URL);
+
+(async () => {
+  const Author = mongoose.model(
+    "Author",
+    mongoose.Schema(
+      {
+        first_name: String,
+        family_name: String,
+        date_of_birth: Date,
+        date_of_death: Date,
+      },
+      "authors"
+    )
+  );
+
+  console.log(await Author.findOne());
+})();
 
 app.use(logger("dev"));
 app.use(express.json());
